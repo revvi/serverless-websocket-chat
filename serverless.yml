@@ -3,6 +3,7 @@ service:
 
 provider:
   name: aws
+  profile: default
   runtime: nodejs12.x
   stackName: ${self:service}-${self:provider.stage}
   stage: ${opt:stage, 'dev'}
@@ -31,7 +32,7 @@ provider:
   environment:
     APPLICATION_TABLE: "chat-table-${self:provider.stage}"
     API_REGION: "${self:provider.region}"
-    DOMAIN_NAME: ""  
+    DOMAIN_NAME: "ws.magerabis.com"  
 
   # optional
   websocketApiName: websocket-chat-${self:provider.stage}

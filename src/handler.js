@@ -131,6 +131,19 @@ async function broadcast(event, context) {
               // currently not possible, and not handled
               break;
             }
+            
+            // console.log(">>>RECORD DYNAMODB")
+            // let currentRecord = JSON.stringify(record, null, 2)
+            // console.log(currentRecord)
+
+            // get username that is recorded in Name if applicable
+            let username = "";
+            if (record.dynamodb.hasOwnProperty('OldImage') && record.dynamodb.OldImage.hasOwnProperty('Name')) {
+              username = record.dynamodb.OldImage.Name.S
+            }
+            if (record.dynamodb.hasOwnProperty('NewImage') && record.dynamodb.NewImage.hasOwnProperty('Name')) {
+              username = record.dynamodb.NewImage.Name.S
+            }
 
             // A connection event on the channel
             // let all users know a connection was created or dropped
@@ -151,7 +164,8 @@ async function broadcast(event, context) {
                   // sender of message "from id"
                   subscriberId: db.parseEntityId(
                     record.dynamodb.Keys[db.Primary.Range].S
-                  )
+                  ),
+                  name: username
                 }
               );
             });
@@ -212,13 +226,15 @@ async function channelManager(event, context) {
 
 async function subscribeChannel(event, context) {
   const channelId = JSON.parse(event.body).channelId;
+  const name = JSON.parse(event.body).name;
   await db.Client.put({
     TableName: db.Table,
     Item: {
       [db.Channel.Connections.Key]: `${db.Channel.Prefix}${channelId}`,
       [db.Channel.Connections.Range]: `${db.Connection.Prefix}${
         db.parseEntityId(event)
-        }`
+        }`,
+      Name: name
     }
   }).promise();
 
