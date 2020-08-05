@@ -11,6 +11,8 @@ class Client {
 
   // allow just passing a single event to setup the client for ease of use
   async _setupClient(config) {
+    const IS_OFFLINE = process.env.IS_OFFLINE;
+
     // fetch config from db if none provided and we do not have a client
     if (typeof config !== 'object' && !this.client) {
       const item = await db.Client.get({
@@ -28,13 +30,25 @@ class Client {
     if (!this.client) {
 
       if (config.requestContext.apiId) {
-        config.requestContext.domainName = `${config.requestContext.apiId}.execute-api.${process.env.API_REGION}.amazonaws.com`
+        if (IS_OFFLINE === 'true') {
+          config.requestContext.domainName = `localhost:3002`
+        } else {
+          // config.requestContext.domainName = `${config.requestContext.apiId}.execute-api.${process.env.API_REGION}.amazonaws.com`
+          config.requestContext.domainName = `${process.env.DOMAIN_NAME}`
+        }
       }
 
-      this.client = new AWS.ApiGatewayManagementApi({
-        apiVersion: "2018-11-29",
-        endpoint: `https://${config.requestContext.domainName}/${config.requestContext.stage}`
-      });
+      if (IS_OFFLINE === 'true') {
+        this.client = new AWS.ApiGatewayManagementApi({
+          apiVersion: "2018-11-29",
+          endpoint: `http://localhost:3002`
+        });
+      } else {
+        this.client = new AWS.ApiGatewayManagementApi({
+          apiVersion: "2018-11-29",
+          endpoint: `https://${config.requestContext.domainName}/${config.requestContext.stage}`
+        });
+      }
 
       // temporarily we update dynamodb with most recent info
       // after CF support this can go away, we just do this so a single deployment makes this work
@@ -63,7 +77,7 @@ class Client {
     if (typeof connection === 'object') {
       ConnectionId = connection.requestContext.connectionId;
     }
-
+    console.log("### SEND ###");
     console.log(connection, payload)
     await this.client.postToConnection({
       ConnectionId,

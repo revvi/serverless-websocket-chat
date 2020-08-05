@@ -62,7 +62,7 @@ async function sendMessage(event, context) {
   // save message for future history
   // saving with timestamp allows sorting
   // maybe do ttl?
-
+  console.log("### SEND MESSAGE ###")
   const body = JSON.parse(event.body);
   const messageId = `${db.Message.Prefix}${Date.now()}`;
   const name = body.name
@@ -109,6 +109,7 @@ async function broadcast(event, context) {
   // disconnections, messages, etc
   // get all connections for channel of interest
   // broadcast the news
+  console.log("### BROADCAST ###");
   const results = event.Records.map(async record => {
     switch (record.dynamodb.Keys[db.Primary.Key].S.split("|")[0]) {
       // Connection entities

@@ -1,5 +1,17 @@
 const AWS = require('aws-sdk');
-const ddb = new AWS.DynamoDB.DocumentClient();
+
+const IS_OFFLINE = process.env.IS_OFFLINE;
+let ddb;
+if (IS_OFFLINE === 'true') {
+  console.log("IS OFFLINE");
+  ddb = new AWS.DynamoDB.DocumentClient({
+    region: 'localhost',
+    endpoint: 'http://localhost:8000'
+  })
+} else {
+  console.log("IS ONLINE");
+  ddb = new AWS.DynamoDB.DocumentClient();
+};
 
 const db = {
   Table: process.env.APPLICATION_TABLE,

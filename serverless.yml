@@ -6,7 +6,7 @@ provider:
   runtime: nodejs12.x
   stackName: ${self:service}-${self:provider.stage}
   stage: ${opt:stage, 'dev'}
-  region: ${opt:region, 'us-east-1'}
+  region: ${opt:region, 'ap-southeast-1'}
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -29,9 +29,9 @@ provider:
             - - Fn::GetAtt: [ApplicationDynamoDBTable, Arn]
               - '*'
   environment:
-    APPLICATION_TABLE:
-      Ref: ApplicationDynamoDBTable
-    API_REGION: "${self:provider.region}"  
+    APPLICATION_TABLE: "chat-table-${self:provider.stage}"
+    API_REGION: "${self:provider.region}"
+    DOMAIN_NAME: ""  
 
   # optional
   websocketApiName: websocket-chat-${self:provider.stage}
@@ -41,8 +41,18 @@ provider:
   # from the websocket event types on your function
   websocketApiRouteSelectionExpression: $request.body.action
 
-# plugins:
-#   - serverless-websockets-plugin
+plugins:
+  - serverless-dynamodb-local
+  - serverless-offline
+
+custom:
+  # serverless-dynamodb-local
+  dynamodb:
+    tableName: "chat-table-${self:provider.stage}"
+    start:
+      migrate: true
+    stages:
+      - dev # whitelisting this stage for dynamodb local
 
 functions:
   # manage connection and disconnection of clients
@@ -98,6 +108,7 @@ resources:
     ApplicationDynamoDBTable:
       Type: AWS::DynamoDB::Table
       Properties:
+        TableName: "${self:provider.environment.APPLICATION_TABLE}"
         BillingMode: PAY_PER_REQUEST
         StreamSpecification:
           StreamViewType: NEW_AND_OLD_IMAGES
