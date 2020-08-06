@@ -1,0 +1,16 @@
+config:
+  target: "wss://ws.kiostix.com/prod"
+  phases:
+    - duration: 60
+      arrivalRate: 50
+  # ws:
+    # Set a custom subprotocol:
+    # subprotocols:
+    #  - json
+scenarios:
+  - engine: "ws"
+    flow:
+      - send: {"action": "subscribeChannel", "channelId": "chat:100", "name": "Adam"}
+      - think: 2
+      - send: {"action": "sendMessage", "name": "Adam", "channelId": "chat:100", "content": '{"type": "chat", "username": "Adam", "color": "#777777", "body": "Hello", "time": "0000", "datetime": "28/7/2000", "room": "chat:100", "userId": "1234"}' }
+      - think: 1

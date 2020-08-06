@@ -101,7 +101,7 @@ async function fetchConnectionSubscriptions(connection) {
 }
 
 async function fetchChannelSubscriptions(channel) {
-  console.log("### FETCH CHANNEL SUBSCRIPTION")
+  // console.log("### FETCH CHANNEL SUBSCRIPTION")
   const channelId = parseEntityId(channel)
   const results = await ddb.query({
     TableName: db.Table,
@@ -115,7 +115,7 @@ async function fetchChannelSubscriptions(channel) {
       ":connectionEntity": db.Connection.Prefix
     }
   }).promise();
-  console.log(results)
+  // console.log(results)
 
   return results;
 }

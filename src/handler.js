@@ -133,9 +133,9 @@ async function broadcast(event, context) {
               break;
             }
             
-            console.log(">>>RECORD DYNAMODB")
-            let currentRecord = JSON.stringify(record, null, 2)
-            console.log(currentRecord)
+            // console.log(">>>RECORD DYNAMODB")
+            // let currentRecord = JSON.stringify(record, null, 2)
+            // console.log(currentRecord)
 
             // get username that is recorded in Name if applicable
             let username = "";
