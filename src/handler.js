@@ -14,17 +14,17 @@ async function connectionManager(event, context) {
   await wsClient._setupClient(event);
 
   if (event.requestContext.eventType === "CONNECT") {
-    // sub general channel
-    await subscribeChannel(
-      {
-        ...event,
-        body: JSON.stringify({
-          action: "subscribe",
-          channelId: "General"
-        })
-      },
-      context
-    );
+    // default to subscribe general channel
+    // await subscribeChannel(
+    //   {
+    //     ...event,
+    //     body: JSON.stringify({
+    //       action: "subscribe",
+    //       channelId: "General"
+    //     })
+    //   },
+    //   context
+    // );
 
     return success;
   } else if (event.requestContext.eventType === "DISCONNECT") {
@@ -86,7 +86,8 @@ async function sendMessage(event, context) {
     }
   }).promise();
 
-  const subscribers = await db.fetchChannelSubscriptions(body.channelId);
+  const data = await db.fetchChannelSubscriptions(body.channelId);
+  const subscribers = data.Items;
   const results = subscribers.map(async subscriber => {
     const subscriberId = db.parseEntityId(
       subscriber[db.Channel.Connections.Range]
@@ -132,9 +133,9 @@ async function broadcast(event, context) {
               break;
             }
             
-            // console.log(">>>RECORD DYNAMODB")
-            // let currentRecord = JSON.stringify(record, null, 2)
-            // console.log(currentRecord)
+            console.log(">>>RECORD DYNAMODB")
+            let currentRecord = JSON.stringify(record, null, 2)
+            console.log(currentRecord)
 
             // get username that is recorded in Name if applicable
             let username = "";
@@ -150,7 +151,9 @@ async function broadcast(event, context) {
             const channelId = db.parseEntityId(
               record.dynamodb.Keys[db.Primary.Key].S
             );
-            const subscribers = await db.fetchChannelSubscriptions(channelId);
+            const data = await db.fetchChannelSubscriptions(channelId);
+            const subscribers = data.Items;
+            const count = data.Count;
             const results = subscribers.map(async subscriber => {
               const subscriberId = db.parseEntityId(
                 subscriber[db.Channel.Connections.Range]
@@ -165,7 +168,8 @@ async function broadcast(event, context) {
                   subscriberId: db.parseEntityId(
                     record.dynamodb.Keys[db.Primary.Range].S
                   ),
-                  name: username
+                  name: username,
+                  count: count
                 }
               );
             });

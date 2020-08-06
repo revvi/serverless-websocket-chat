@@ -32,7 +32,7 @@ provider:
   environment:
     APPLICATION_TABLE: "chat-table-${self:provider.stage}"
     API_REGION: "${self:provider.region}"
-    DOMAIN_NAME: "ws.magerabis.com"  
+    DOMAIN_NAME: ""  
 
   # optional
   websocketApiName: websocket-chat-${self:provider.stage}
