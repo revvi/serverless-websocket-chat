@@ -1,5 +1,5 @@
 config:
-  target: "wss://ws.kiostix.com/prod"
+  target: ""
   phases:
     - duration: 60
       arrivalRate: 50
