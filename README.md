@@ -42,7 +42,7 @@ Install serverless
 
 `npm install -g serverless`
 
-Set credentials in `~/.aws/credentials`, then create `kiostixProfile` with current aws_access_key_id and aws_secret_access_key. 
+Set credentials in `~/.aws/credentials`, then create `profile` with current aws_access_key_id and aws_secret_access_key. 
 
 Reference:
 https://www.serverless.com/framework/docs/providers/aws/guide/credentials/
@@ -50,7 +50,7 @@ https://www.serverless.com/framework/docs/providers/aws/guide/credentials/
 Example:
 
 ```
-[kiostixProfile]
+[profile]
 aws_access_key_id=xxxxxxxxxx
 aws_secret_access_key=xxxxxxxxxx
 ```
