@@ -16,6 +16,6 @@
   "license": "MIT",
   "devDependencies": {
     "serverless-dynamodb-local": "^0.2.39",
-    "serverless-offline": "^6.5.0"
+    "serverless-offline": "^12.0.4"
   }
 }
